@@ -1,6 +1,6 @@
 @page "/events"
 @using EventEase.Models
-@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
 
 <PageTitle>Events</PageTitle>
 <h1>Events</h1>
@@ -15,7 +15,7 @@
                         <strong>@e.Name</strong>
                         <div class="btn-group">
                             <NavLink class="btn btn-sm btn-outline-primary" href="@($"/events/{Uri.EscapeDataString(e.Name)}")">Details</NavLink>
-                            <NavLink class="btn btn-sm btn-outline-success" href="@($"/register/{Uri.EscapeDataString(e.Name)}")">Register</NavLink>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => SelectEvent(e))">Edit</button>
                         </div>
                     </div>
                     <div class="text-muted">
@@ -33,7 +33,8 @@
         @if (selectedEvent is not null)
         {
             <h2>Edit selected event</h2>
-            <EditForm Model="selectedEvent">
+            <EditForm Model="selectedEvent" OnValidSubmit="SaveSelected">
+                <DataAnnotationsValidator />
                 <div class="mb-2">
                     <label for="name">Name</label>
                     <InputText id="name" class="form-control" @bind-Value="selectedEvent.Name" />
@@ -46,6 +47,10 @@
                     <label for="loc">Location</label>
                     <InputText id="loc" class="form-control" @bind-Value="selectedEvent.Location" />
                 </div>
+                <div class="mt-2">
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <button class="btn btn-secondary ms-2" type="button" @onclick="CancelEdit">Cancel</button>
+                </div>
             </EditForm>
         }
         else
@@ -57,8 +62,31 @@
 
 @code {
     private EventItem? selectedEvent;
+    private EventItem? snapshot;
 
-    private void SelectEvent(EventItem item) => selectedEvent = item;
+    private void SelectEvent(EventItem item)
+    {
+        selectedEvent = item;
+        snapshot = new EventItem { Name = item.Name, Date = item.Date, Location = item.Location };
+    }
+
+    private void SaveSelected()
+    {
+        // selectedEvent is already bound; no extra work needed for in-memory list.
+        snapshot = null;
+    }
+
+    private void CancelEdit()
+    {
+        if (selectedEvent is not null && snapshot is not null)
+        {
+            selectedEvent.Name = snapshot.Name;
+            selectedEvent.Date = snapshot.Date;
+            selectedEvent.Location = snapshot.Location;
+        }
+        selectedEvent = null;
+        snapshot = null;
+    }
 
     private readonly List<EventItem> EventList =
     [
