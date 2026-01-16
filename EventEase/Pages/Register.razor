@@ -11,12 +11,12 @@
 
     <div class="mb-2">
         <label for="fullName">Full Name</label>
-        <InputText id="fullName" class="form-control" @bind-Value="form.FullName" @bind-Value:event="oninput" />
+        <InputText id="fullName" class="form-control" @bind-Value="form.FullName" />
         <ValidationMessage For="() => form.FullName" />
-    </div>
+    </div>  
     <div class="mb-2">
         <label for="email">Email</label>
-        <InputText id="email" type="email" class="form-control" @bind-Value="form.Email" @bind-Value:event="oninput" />
+        <InputText id="email" type="email" class="form-control" @bind-Value="form.Email" />
         <ValidationMessage For="() => form.Email" />
     </div>
     <div class="mb-3">
