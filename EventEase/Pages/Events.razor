@@ -1,106 +1,106 @@
 @page "/events"
 @using EventEase.Models
 @using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 
 <PageTitle>Events</PageTitle>
 <h1>Events</h1>
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="events-list">
-            @foreach (var e in EventList)
-            {
-                <div class="mb-3 p-2 border rounded">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <strong>@e.Name</strong>
-                        <div class="btn-group">
-                            <NavLink class="btn btn-sm btn-outline-primary" href="@($"/events/{Uri.EscapeDataString(e.Name)}")">Details</NavLink>
-                            <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => SelectEvent(e))">Edit</button>
-                        </div>
-                    </div>
-                    <div class="text-muted">
-                        @e.Date.ToString("MMMM dd, yyyy") • @e.Location
-                    </div>
-                    <div class="mt-2">
-                        <EventCard Name="@e.Name" Date="@e.Date" Location="@e.Location" />
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
+ <div class="col-md-6">
+ <div class="events-list">
+ <Virtualize Items="EventList" Context="e">
+ <div class="mb-3 p-2 border rounded" @key="e.Name">
+ <div class="d-flex justify-content-between align-items-center">
+ <strong>@e.Name</strong>
+ <div class="btn-group">
+ <NavLink class="btn btn-sm btn-outline-primary" href="@($"/events/{Uri.EscapeDataString(e.Name)}")">Details</NavLink>
+ <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => SelectEvent(e))">Edit</button>
+ </div>
+ </div>
+ <div class="text-muted">
+ @e.Date.ToString("MMMM dd, yyyy")  • @e.Location
+ </div>
+ <div class="mt-2">
+ <EventCard Name="@e.Name" Date="@e.Date" Location="@e.Location" />
+ </div>
+ </div>
+ </Virtualize>
+ </div>
+ </div>
 
-    <div class="col-md-6">
-        @if (selectedEvent is not null)
-        {
-            <h2>Edit selected event</h2>
-            <EditForm Model="selectedEvent" OnValidSubmit="SaveSelected" OnInvalidSubmit="HandleInvalid">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+ <div class="col-md-6">
+ @if (selectedEvent is not null)
+ {
+ <h2>Edit selected event</h2>
+ <EditForm Model="selectedEvent" OnValidSubmit="SaveSelected" OnInvalidSubmit="HandleInvalid">
+ <DataAnnotationsValidator />
+ <ValidationSummary />
 
-                <div class="mb-2">
-                    <label for="name">Name</label>
-                    <InputText id="name" class="form-control" @bind-Value="selectedEvent.Name" />
-                    <ValidationMessage For="() => selectedEvent.Name" />
-                </div>
-                <div class="mb-2">
-                    <label for="date">Date</label>
-                    <InputDate TValue="DateTime" id="date" class="form-control" @bind-Value="selectedEvent.Date" />
-                    <ValidationMessage For="() => selectedEvent.Date" />
-                </div>
-                <div class="mb-2">
-                    <label for="loc">Location</label>
-                    <InputText id="loc" class="form-control" @bind-Value="selectedEvent.Location" />
-                    <ValidationMessage For="() => selectedEvent.Location" />
-                </div>
-                <div class="mt-2">
-                    <button class="btn btn-primary" type="submit">Save</button>
-                    <button class="btn btn-secondary ms-2" type="button" @onclick="CancelEdit">Cancel</button>
-                </div>
-            </EditForm>
-        }
-        else
-        {
-            <em>Select an event to edit its details.</em>
-        }
-    </div>
+ <div class="mb-2">
+ <label for="name">Name</label>
+ <InputText id="name" class="form-control" @bind-Value="selectedEvent.Name" />
+ <ValidationMessage For="() => selectedEvent.Name" />
+ </div>
+ <div class="mb-2">
+ <label for="date">Date</label>
+ <InputDate TValue="DateTime" id="date" class="form-control" @bind-Value="selectedEvent.Date" />
+ <ValidationMessage For="() => selectedEvent.Date" />
+ </div>
+ <div class="mb-2">
+ <label for="loc">Location</label>
+ <InputText id="loc" class="form-control" @bind-Value="selectedEvent.Location" />
+ <ValidationMessage For="() => selectedEvent.Location" />
+ </div>
+ <div class="mt-2">
+ <button class="btn btn-primary" type="submit">Save</button>
+ <button class="btn btn-secondary ms-2" type="button" @onclick="CancelEdit">Cancel</button>
+ </div>
+ </EditForm>
+ }
+ else
+ {
+ <em>Select an event to edit its details.</em>
+ }
+ </div>
 </div>
 
 @code {
-    private EventItem? selectedEvent;
-    private EventItem? snapshot;
+ private EventItem? selectedEvent;
+ private EventItem? snapshot;
 
-    private void SelectEvent(EventItem item)
-    {
-        selectedEvent = item;
-        snapshot = new EventItem { Name = item.Name, Date = item.Date, Location = item.Location };
-    }
+ private void SelectEvent(EventItem item)
+ {
+ selectedEvent = item;
+ snapshot = new EventItem { Name = item.Name, Date = item.Date, Location = item.Location };
+ }
 
-    private void SaveSelected()
-    {
-        snapshot = null;
-    }
+ private void SaveSelected()
+ {
+ snapshot = null;
+ }
 
-    private void HandleInvalid(EditContext _)
-    {
-        // No-op: ValidationSummary displays errors, and form won't submit.
-    }
+ private void HandleInvalid(EditContext _)
+ {
+ // No-op: ValidationSummary displays errors, and form won't submit.
+ }
 
-    private void CancelEdit()
-    {
-        if (selectedEvent is not null && snapshot is not null)
-        {
-            selectedEvent.Name = snapshot.Name;
-            selectedEvent.Date = snapshot.Date;
-            selectedEvent.Location = snapshot.Location;
-        }
-        selectedEvent = null;
-        snapshot = null;
-    }
+ private void CancelEdit()
+ {
+ if (selectedEvent is not null && snapshot is not null)
+ {
+ selectedEvent.Name = snapshot.Name;
+ selectedEvent.Date = snapshot.Date;
+ selectedEvent.Location = snapshot.Location;
+ }
+ selectedEvent = null;
+ snapshot = null;
+ }
 
-    private readonly List<EventItem> EventList =
-    [
-        new() { Name = "TechConf 2026", Date = new DateTime(2026, 5, 12), Location = "Seattle, WA" },
-        new() { Name = "Open Source Summit", Date = new DateTime(2026, 8, 3), Location = "Austin, TX" },
-        new() { Name = "Cloud Expo", Date = new DateTime(2026, 10, 21), Location = "New York, NY" }
-    ];
+ private readonly List<EventItem> EventList =
+ [
+ new() { Name = "TechConf2026", Date = new DateTime(2026,5,12), Location = "Seattle, WA" },
+ new() { Name = "Open Source Summit", Date = new DateTime(2026,8,3), Location = "Austin, TX" },
+ new() { Name = "Cloud Expo", Date = new DateTime(2026,10,21), Location = "New York, NY" }
+ ];
 }
