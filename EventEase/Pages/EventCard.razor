@@ -1,15 +1,25 @@
 @using Microsoft.AspNetCore.Components
+@using System.ComponentModel.DataAnnotations
 
 <div class="event-card border rounded p-3 mb-3">
-    <div class="event-card__header h5 mb-2">@Name</div>
+    <div class="event-card__header h5 mb-2">@DisplayName</div>
     <div class="event-card__body">
-        <div><strong>Date:</strong> @Date.ToString("MMMM dd, yyyy")</div>
-        <div><strong>Location:</strong> @Location</div>
+        <div><strong>Date:</strong> @DisplayDate</div>
+        <div><strong>Location:</strong> @DisplayLocation</div>
     </div>
 </div>
 
 @code {
-    [Parameter] public string Name { get; set; } = string.Empty;
-    [Parameter] public DateTime Date { get; set; } = DateTime.Today;
-    [Parameter] public string Location { get; set; } = string.Empty;
+    [Parameter, EditorRequired, Required]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public DateTime Date { get; set; } = DateTime.Today;
+
+    [Parameter, EditorRequired, Required]
+    public string Location { get; set; } = string.Empty;
+
+    private string DisplayName => string.IsNullOrWhiteSpace(Name) ? "(Unnamed event)" : Name;
+    private string DisplayLocation => string.IsNullOrWhiteSpace(Location) ? "(Unknown location)" : Location;
+    private string DisplayDate => Date == default ? "(Unknown date)" : Date.ToString("MMMM dd, yyyy");
 }

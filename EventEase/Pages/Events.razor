@@ -33,19 +33,24 @@
         @if (selectedEvent is not null)
         {
             <h2>Edit selected event</h2>
-            <EditForm Model="selectedEvent" OnValidSubmit="SaveSelected">
+            <EditForm Model="selectedEvent" OnValidSubmit="SaveSelected" OnInvalidSubmit="HandleInvalid">
                 <DataAnnotationsValidator />
+                <ValidationSummary />
+
                 <div class="mb-2">
                     <label for="name">Name</label>
                     <InputText id="name" class="form-control" @bind-Value="selectedEvent.Name" />
+                    <ValidationMessage For="() => selectedEvent.Name" />
                 </div>
                 <div class="mb-2">
                     <label for="date">Date</label>
                     <InputDate TValue="DateTime" id="date" class="form-control" @bind-Value="selectedEvent.Date" />
+                    <ValidationMessage For="() => selectedEvent.Date" />
                 </div>
                 <div class="mb-2">
                     <label for="loc">Location</label>
                     <InputText id="loc" class="form-control" @bind-Value="selectedEvent.Location" />
+                    <ValidationMessage For="() => selectedEvent.Location" />
                 </div>
                 <div class="mt-2">
                     <button class="btn btn-primary" type="submit">Save</button>
@@ -72,8 +77,12 @@
 
     private void SaveSelected()
     {
-        // selectedEvent is already bound; no extra work needed for in-memory list.
         snapshot = null;
+    }
+
+    private void HandleInvalid(EditContext _)
+    {
+        // No-op: ValidationSummary displays errors, and form won't submit.
     }
 
     private void CancelEdit()
