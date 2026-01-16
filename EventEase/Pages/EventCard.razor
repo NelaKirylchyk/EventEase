@@ -1,0 +1,15 @@
+@using Microsoft.AspNetCore.Components
+
+<div class="event-card border rounded p-3 mb-3">
+    <div class="event-card__header h5 mb-2">@Name</div>
+    <div class="event-card__body">
+        <div><strong>Date:</strong> @Date.ToString("MMMM dd, yyyy")</div>
+        <div><strong>Location:</strong> @Location</div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Name { get; set; } = string.Empty;
+    [Parameter] public DateTime Date { get; set; } = DateTime.Today;
+    [Parameter] public string Location { get; set; } = string.Empty;
+}

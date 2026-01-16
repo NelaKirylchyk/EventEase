@@ -1,0 +1,15 @@
+Card.razor
+
+<div class="event-card">
+    <div class="event-card__header">@Name</div>
+    <div class="event-card__body">
+        <div><strong>Date:</strong> @Date.ToString("MMMM dd, yyyy")</div>
+        <div><strong>Location:</strong> @Location</div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Name { get; set; } = string.Empty;
+    [Parameter] public DateTime Date { get; set; } = DateTime.Today;
+    [Parameter] public string Location { get; set; } = string.Empty;
+}

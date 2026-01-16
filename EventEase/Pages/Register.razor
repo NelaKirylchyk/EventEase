@@ -1,0 +1,65 @@
+@page "/register/{name}"
+@using Microsoft.AspNetCore.Components
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>Register</PageTitle>
+<h1>Register for @name</h1>
+
+<EditForm Model="form" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-2">
+        <label for="fullName">Full Name</label>
+        <InputText id="fullName" class="form-control" @bind-Value="form.FullName" @bind-Value:event="oninput" />
+        <ValidationMessage For="() => form.FullName" />
+    </div>
+    <div class="mb-2">
+        <label for="email">Email</label>
+        <InputText id="email" type="email" class="form-control" @bind-Value="form.Email" @bind-Value:event="oninput" />
+        <ValidationMessage For="() => form.Email" />
+    </div>
+    <div class="mb-3">
+        <button class="btn btn-primary" type="submit">Submit</button>
+        <NavLink class="btn btn-secondary ms-2" href="@($"/events/{Uri.EscapeDataString(name)}")">Back to Details</NavLink>
+    </div>
+</EditForm>
+
+@if (submitSucceeded)
+{
+    <div class="alert alert-success mt-3">Thanks, @form.FullName! Confirmation will be sent to @form.Email.</div>
+}
+
+@code {
+    [Parameter] public string name { get; set; } = string.Empty;
+
+    private RegistrationModel form = new();
+    private bool submitSucceeded;
+
+    protected override void OnParametersSet()
+    {
+        form.EventName = name;
+    }
+
+    private void HandleValidSubmit()
+    {
+        submitSucceeded = true;
+        // Perform submit action (e.g., call API) here.
+    }
+
+    private void HandleInvalidSubmit(EditContext _)
+    {
+        submitSucceeded = false;
+    }
+
+    private sealed class RegistrationModel
+    {
+        public string EventName { get; set; } = string.Empty;
+
+        [Required]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required, EmailAddress]
+        public string Email { get; set; } = string.Empty;
+    }
+}
