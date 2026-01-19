@@ -1,6 +1,10 @@
 ﻿# EventEase
 
 A lightweight event discovery and registration app built with Blazor WebAssembly (.NET8). Browse events, view details, and register with built‑in validation. The app demonstrates idiomatic Blazor patterns including dependency injection, state management, and forms, and can be deployed as a static site with optional offline support.
+<img width="1451" height="716" alt="Screenshot 2026-01-19 133624" src="https://github.com/user-attachments/assets/6817a4fd-c5ba-4206-83c8-0f4182b6ea4c" />
+<img width="1427" height="697" alt="Screenshot 2026-01-19 133643" src="https://github.com/user-attachments/assets/33285b51-10ef-4e08-9992-044e1723af29" />
+<img width="1902" height="721" alt="Screenshot 2026-01-19 133737" src="https://github.com/user-attachments/assets/6088c46d-24f8-4b89-a83c-00e73e4f514d" />
+
 
 - Tech: Blazor WebAssembly (.NET8), C#12
 - Project: Standalone WASM app (no server API required)
