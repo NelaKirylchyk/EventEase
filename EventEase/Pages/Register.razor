@@ -1,65 +1,96 @@
-@page "/register/{name}"
-@using Microsoft.AspNetCore.Components
+@page "/register/{Name}"
 @using System.ComponentModel.DataAnnotations
+@using EventEase.Services
+@using Microsoft.AspNetCore.Components
+@inject ISessionState Session
+@inject EventEase.Services.IAttendanceTracker Attendance
 
 <PageTitle>Register</PageTitle>
-<h1>Register for @name</h1>
+<h1>Register for @Name</h1>
 
 <EditForm Model="form" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+ <DataAnnotationsValidator />
+ <ValidationSummary />
 
-    <div class="mb-2">
-        <label for="fullName">Full Name</label>
-        <InputText id="fullName" class="form-control" @bind-Value="form.FullName" />
-        <ValidationMessage For="() => form.FullName" />
-    </div>  
-    <div class="mb-2">
-        <label for="email">Email</label>
-        <InputText id="email" type="email" class="form-control" @bind-Value="form.Email" />
-        <ValidationMessage For="() => form.Email" />
-    </div>
-    <div class="mb-3">
-        <button class="btn btn-primary" type="submit">Submit</button>
-        <NavLink class="btn btn-secondary ms-2" href="@($"/events/{Uri.EscapeDataString(name)}")">Back to Details</NavLink>
-    </div>
+ <div class="mb-2">
+ <label for="fullName">Full Name</label>
+ <InputText id="fullName" class="form-control" @bind-Value="form.FullName" />
+ <ValidationMessage For="() => form.FullName" />
+ </div>
+ <div class="mb-2">
+ <label for="email">Email</label>
+ <InputText id="email" type="email" class="form-control" @bind-Value="form.Email" />
+ <ValidationMessage For="() => form.Email" />
+ </div>
+ <div class="mb-3">
+ <button class="btn btn-primary" type="submit">Submit</button>
+ <NavLink class="btn btn-secondary ms-2" href="@($"/events/{Uri.EscapeDataString(Name ?? string.Empty)}")">Back to Details</NavLink>
+ </div>
 </EditForm>
 
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+ <div class="alert alert-danger">@errorMessage</div>
+}
 @if (submitSucceeded)
 {
-    <div class="alert alert-success mt-3">Thanks, @form.FullName! Confirmation will be sent to @form.Email.</div>
+ <div class="alert alert-success mt-3">Thanks, @form.FullName! Confirmation will be sent to @form.Email.</div>
 }
 
 @code {
-    [Parameter] public string name { get; set; } = string.Empty;
+ [Parameter] public string Name { get; set; } = string.Empty;
 
-    private RegistrationModel form = new();
-    private bool submitSucceeded;
+ private RegistrationModel form = new();
+ private bool submitSucceeded;
+ private string? errorMessage;
 
-    protected override void OnParametersSet()
-    {
-        form.EventName = name;
-    }
+ protected override async Task OnParametersSetAsync()
+ {
+ form.EventName = Name ?? string.Empty;
+ var keyPrefix = $"reg:{form.EventName}";
 
-    private void HandleValidSubmit()
-    {
-        submitSucceeded = true;
-        // Perform submit action (e.g., call API) here.
-    }
+ // Load any previously saved session data for this event
+ form.FullName = await Session.GetAsync($"{keyPrefix}:full") ?? string.Empty;
+ form.Email = await Session.GetAsync($"{keyPrefix}:email") ?? string.Empty;
+ }
 
-    private void HandleInvalidSubmit(EditContext _)
-    {
-        submitSucceeded = false;
-    }
+ private async Task HandleValidSubmit()
+ {
+ errorMessage = null;
+ try
+ {
+ // Persist minimal session data
+ var eventKey = Name ?? string.Empty;
+ await Session.SetAsync($"reg:{eventKey}:full", form.FullName);
+ await Session.SetAsync($"reg:{eventKey}:email", form.Email);
 
-    private sealed class RegistrationModel
-    {
-        public string EventName { get; set; } = string.Empty;
+ // Track attendance (synchronous in the current implementation)
+ Attendance.Register(eventKey);
 
-        [Required]
-        public string FullName { get; set; } = string.Empty;
+ submitSucceeded = true;
+ }
+ catch (Exception ex)
+ {
+ // Gracefully display error to the user
+ submitSucceeded = false;
+ errorMessage = $"Registration failed: {ex.Message}";
+ }
+ }
 
-        [Required, EmailAddress]
-        public string Email { get; set; } = string.Empty;
-    }
+ private void HandleInvalidSubmit(EditContext _)
+ {
+ submitSucceeded = false;
+ errorMessage = "Please fix the validation errors and try again.";
+ }
+
+ private sealed class RegistrationModel
+ {
+ public string EventName { get; set; } = string.Empty;
+
+ [Required]
+ public string FullName { get; set; } = string.Empty;
+
+ [Required, EmailAddress]
+ public string Email { get; set; } = string.Empty;
+ }
 }
