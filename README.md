@@ -1,6 +1,6 @@
-# EventEase
+ï»¿# EventEase
 
-A lightweight event discovery and registration app built with Blazor WebAssembly (.NET8). Browse events, view details, and register with built?in validation. The app demonstrates idiomatic Blazor patterns including dependency injection, state management, and forms, and can be deployed as a static site with optional offline support.
+A lightweight event discovery and registration app built with Blazor WebAssembly (.NET8). Browse events, view details, and register with builtâ€‘in validation. The app demonstrates idiomatic Blazor patterns including dependency injection, state management, and forms, and can be deployed as a static site with optional offline support.
 
 - Tech: Blazor WebAssembly (.NET8), C#12
 - Project: Standalone WASM app (no server API required)
@@ -10,7 +10,7 @@ A lightweight event discovery and registration app built with Blazor WebAssembly
 - Events list and details pages
 - Registration form with validation and user feedback
 - Session persistence for draft registration data
-- Simple in?memory attendance tracking
+- Simple inâ€‘memory attendance tracking
 - Responsive layout with navigation menu
 - Optional offline support when published
 
@@ -31,19 +31,19 @@ A lightweight event discovery and registration app built with Blazor WebAssembly
 ### Open in Visual Studio
 - Open the `EventEase/EventEase.csproj` and press F5.
 
-## Project structure (high?level)
-- `EventEase/Program.cs` — App bootstrapping and dependency injection
-- `EventEase/App.razor` — Root component and router
-- `EventEase/Layout/MainLayout.razor`, `EventEase/Layout/NavMenu.razor` — Shell and navigation
-- `EventEase/Pages/Events.razor` — Events list
-- `EventEase/Pages/EventDetails.razor` — Event detail view
-- `EventEase/Pages/Register.razor` — Registration form with validation and session persistence
-- `EventEase/Services/` — App services and state management
- - `ISessionState`, `SessionState` — Simple browser session storage
- - `IEventsState`, `EventsState` — Events data store
- - `IAttendanceTracker`, `AttendanceTracker` — In?memory attendance
-- `EventEase/Models/` — Domain models (`EventItem`, `AttendanceRecord`)
-- `EventEase/wwwroot/` — Static assets and PWA service worker files
+## Project structure (highâ€‘level)
+- `EventEase/Program.cs` â€” App bootstrapping and dependency injection
+- `EventEase/App.razor` â€” Root component and router
+- `EventEase/Layout/MainLayout.razor`, `EventEase/Layout/NavMenu.razor` â€” Shell and navigation
+- `EventEase/Pages/Events.razor` â€” Events list
+- `EventEase/Pages/EventDetails.razor` â€” Event detail view
+- `EventEase/Pages/Register.razor` â€” Registration form with validation and session persistence
+- `EventEase/Services/` â€” App services and state management
+ - `ISessionState`, `SessionState` â€” Simple browser session storage
+ - `IEventsState`, `EventsState` â€” Events data store
+ - `IAttendanceTracker`, `AttendanceTracker` â€” Inâ€‘memory attendance
+- `EventEase/Models/` â€” Domain models (`EventItem`, `AttendanceRecord`)
+- `EventEase/wwwroot/` â€” Static assets and PWA service worker files
 
 Note: Some generated `.ide.g.cs` files may appear during development. Source components are in the corresponding `.razor` files.
 
@@ -55,11 +55,11 @@ Note: Some generated `.ide.g.cs` files may appear during development. Source com
 - Routing
  - Defined using `@page` directives in components, e.g., `@page "/register/{Name}"`
 - Forms & Validation
- - Uses `EditForm`, `DataAnnotationsValidator`, and `ValidationMessage` for client?side validation
+ - Uses `EditForm`, `DataAnnotationsValidator`, and `ValidationMessage` for clientâ€‘side validation
 - State & Persistence
  - Minimal session state (name/email) stored via `ISessionState` implementation
 - PWA / Offline (publish only)
- - `wwwroot/service-worker.published.js` caches app assets after publish. See Blazor offline considerations to understand trade?offs.
+ - `wwwroot/service-worker.published.js` caches app assets after publish. See Blazor offline considerations to understand tradeâ€‘offs.
 
 ## Notable components
 - `Pages/Register.razor`
@@ -80,7 +80,7 @@ Blazor WASM apps can be hosted as static sites.
 1. Publish: `dotnet publish -c Release`
 2. Use the contents of `EventEase/bin/Release/net8.0/publish/wwwroot` as the site root
 3. Configure Pages to serve from that folder
-4. If hosting under a sub?path, ensure `base` path and service worker scope are correctly configured
+4. If hosting under a subâ€‘path, ensure `base` path and service worker scope are correctly configured
 
 - Azure Static Web Apps
  - Create a Static Web App resource and point it to this repo
@@ -89,20 +89,8 @@ Blazor WASM apps can be hosted as static sites.
 
 ## Troubleshooting
 - Blank page after deployment
- - Check `<base href="/">` in `index.html` and adjust for sub?path hosting
+ - Check `<base href="/">` in `index.html` and adjust for subâ€‘path hosting
 - Stale content after update
  - Service worker may cache assets; perform a hard refresh or bump the app version and redeploy
 - Validation not triggering
  - Ensure `DataAnnotationsValidator` and `ValidationMessage` are present in the `EditForm`
-
-## Roadmap ideas
-- Real backend API for events and registrations
-- Authentication for managing events
-- Persistent storage for attendance
-- Improved UI styling and accessibility
-
-## Contributing
-Issues and PRs are welcome. Please open an issue to discuss significant changes.
-
-## License
-Add a license file (e.g., MIT) at the repo root if you plan to open?source the project.
